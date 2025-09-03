@@ -1,63 +1,57 @@
-# ProjetoSoftwareOO
-Repositório da disciplina de Projeto de Software (com Orientação a Objetos)
+Sistema de Delivery - Projeto de Software OO
+Descrição do Projeto
+O sistema permite gerenciar restaurantes, cardápios, processar pedidos e realizar pagamentos de forma integrada.
 
-# Sistema de Delivery Online (Versão Inicial com POO)
+Funcionalidades Implementadas
+Cadastro e gestão de restaurantes por categoria
 
-Este projeto é uma simulação de um sistema de delivery de comida, desenvolvido com foco em Programação Orientada a Objetos (POO). O sistema permite o cadastro de restaurantes, adição de itens ao cardápio e consulta dos cardápios disponíveis.
+Gerenciamento completo de cardápios (adicionar, remover, consultar itens)
 
-A estrutura atual foca na modelagem básica das entidades `Restaurante` e `Prato`, com previsão de expansão para usuários, pedidos, pagamentos e entregas.
+Sistema de pedidos com carrinho de compras
 
-## Estrutura de Classes
+Processamento de pagamentos (PIX e Cartão)
 
-### 1. Classe: Restaurante
+Simulação de entrega de pedidos
 
-Representa um restaurante cadastrado no sistema.
+Estrutura de Classes
+1. ItemCardapio
+Representa um item do cardápio com nome e preço.
 
-**Atributos:**
-- `nome`: nome do restaurante
-- `categoria`: tipo de comida ou serviço oferecido (ex: "Japonesa", "Lanchonete")
-- `cardapio`: lista de objetos do tipo `Prato`
+Atributos: _nome, _preco (protegidos)
 
-**Métodos:**
-- `adicionar_prato(nome, preco)`: adiciona um novo prato ao cardápio do restaurante
-- `exibir_cardapio()`: mostra todos os pratos disponíveis no restaurante
+Métodos: Properties para acesso controlado
 
----
+2. Restaurante
+Gerencia restaurantes e seus cardápios.
 
-### 2. Classe: Prato
+Atributos: _nome, _categoria, _cardapio[]
 
-Representa um item do cardápio de um restaurante.
+Métodos: adicionar_item(), remover_item(), exibir_cardapio()
 
-**Atributos:**
-- `nome`: nome do prato
-- `preco`: valor em reais do prato
+3. Pedido
+Controla o processo de compra.
 
----
+Atributos: restaurante, itens[]
 
-## Possíveis Classes Futuras
+Métodos: adicionar_item(), resumo(), cálculo de total
 
-### Usuario
-Simula um cliente do sistema. Poderá realizar pedidos e consultar seu histórico.
+4. Sistema de Pagamento (Hierarquia de Herança)
+Pagamento (Classe Abstrata)
+Método abstrato: processar()
 
-**Atributos esperados:** nome, email, senha, endereço  
-**Métodos esperados:** fazer_pedido(), consultar_pedidos()
+PagamentoPix
+Atributos específicos: _chave_pix
 
-### Pedido
-Representa o pedido feito por um usuário.
+Implementação específica do processamento
 
-**Atributos esperados:** usuário, restaurante, lista de pratos, status, valor total  
-**Métodos esperados:** calcular_total(), atualizar_status()
+PagamentoCartao
+Atributos específicos: _numero_cartao, _titular, _cvv
 
-### Pagamento
-Gerencia o pagamento de um pedido.
+Implementação específica do processamento
 
-**Atributos esperados:** valor, método, status  
-**Métodos esperados:** processar_pagamento()
+5. SistemaDelivery
+Classe principal que orquestra todo o sistema.
 
-### Entrega
-Responsável pela entrega de pedidos.
+Atributos: restaurantes (dicionário)
 
-**Atributos esperados:** pedido, status, tempo estimado  
-**Métodos esperados:** atualizar_status()
-
----
+Métodos: cadastrar_restaurante(), fazer_pedido(), listar_restaurantes()
