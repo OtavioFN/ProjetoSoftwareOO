@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 class ItemCardapio:
     def __init__(self, nome, preco):
         self._nome = nome
@@ -13,7 +15,6 @@ class ItemCardapio:
 
     def __str__(self):
         return f"{self._nome} - R$ {self._preco:.2f}"
-
 
 class Restaurante:
     def __init__(self, nome, categoria):
@@ -64,7 +65,6 @@ class Restaurante:
                 print(f" - {item}")
         print()
 
-
 class Pedido:
     def __init__(self, restaurante: Restaurante):
         self.restaurante = restaurante
@@ -82,21 +82,52 @@ class Pedido:
         print(f"Total a pagar: R$ {total:.2f}\n")
         return total
 
-
-class Pagamento:
+class Pagamento(ABC):
+    def __init__(self, descricao):
+        self._descricao = descricao
+    
+    @property
+    def descricao(self):
+        return self._descricao
+    
+    @abstractmethod
     def processar(self, valor):
-        raise NotImplementedError
-
+        pass
 
 class PagamentoPix(Pagamento):
+    def __init__(self, chave_pix):
+        super().__init__("Pagamento via PIX")
+        self._chave_pix = chave_pix
+    
+    @property
+    def chave_pix(self):
+        return self._chave_pix
+    
     def processar(self, valor):
-        print(f"Pagamento de R$ {valor:.2f} realizado via Pix.\n")
-
+        print(f"Pagamento de R$ {valor:.2f} realizado via PIX.")
+        print(f"Chave PIX: {self._chave_pix}")
+        print(f"Descrição: {self._descricao}\n")
 
 class PagamentoCartao(Pagamento):
+    def __init__(self, numero_cartao, titular, cvv):
+        super().__init__("Pagamento no Cartão")
+        self._numero_cartao = numero_cartao
+        self._titular = titular
+        self._cvv = cvv
+    
+    @property
+    def numero_cartao(self):
+        return self._numero_cartao
+    
+    @property
+    def titular(self):
+        return self._titular
+    
     def processar(self, valor):
-        print(f"Pagamento de R$ {valor:.2f} realizado no Cartão.\n")
-
+        print(f"Pagamento de R$ {valor:.2f} realizado no Cartão.")
+        print(f"Cartão: **** **** **** {self._numero_cartao[-4:]}")
+        print(f"Titular: {self._titular}")
+        print(f"Descrição: {self._descricao}\n")
 
 class SistemaDelivery:
     def __init__(self):
@@ -104,29 +135,24 @@ class SistemaDelivery:
         self._pre_cadastrar_exemplos()
 
     def _pre_cadastrar_exemplos(self):
-        """Cadastra alguns restaurantes e itens para demonstração"""
-        # Pizzaria
         pizza_place = Restaurante("pizza do zé", "pizzaria")
         pizza_place.adicionar_item(ItemCardapio("Pizza Margherita", 45.90))
         pizza_place.adicionar_item(ItemCardapio("Pizza Calabresa", 52.50))
         pizza_place.adicionar_item(ItemCardapio("Pizza Quatro Queijos", 58.00))
         self.restaurantes["pizza do zé"] = pizza_place
         
-        # Hamburgueria
         burger_kingdom = Restaurante("burger kingdom", "hamburgueria")
         burger_kingdom.adicionar_item(ItemCardapio("X-Burger", 22.90))
         burger_kingdom.adicionar_item(ItemCardapio("X-Bacon", 28.50))
         burger_kingdom.adicionar_item(ItemCardapio("X-Tudo", 35.00))
         self.restaurantes["burger kingdom"] = burger_kingdom
         
-        # Japonesa
         sushi_house = Restaurante("sushi house", "japonesa")
         sushi_house.adicionar_item(ItemCardapio("Temaki", 18.90))
         sushi_house.adicionar_item(ItemCardapio("Sashimi", 32.00))
         sushi_house.adicionar_item(ItemCardapio("Combo Sushi", 45.50))
         self.restaurantes["sushi house"] = sushi_house
         
-        # Brasileira
         feijoada_do_joao = Restaurante("feijoada do joão", "brasileira")
         feijoada_do_joao.adicionar_item(ItemCardapio("Feijoada Completa", 35.90))
         feijoada_do_joao.adicionar_item(ItemCardapio("Prato Executivo", 22.50))
@@ -206,17 +232,21 @@ class SistemaDelivery:
 
         total = pedido.resumo()
         metodo = input("Escolha método de pagamento (pix/cartao): ").strip().lower()
+        
         if metodo == "pix":
-            PagamentoPix().processar(total)
+            chave = input("Digite sua chave PIX: ").strip()
+            PagamentoPix(chave).processar(total)
         elif metodo == "cartao":
-            PagamentoCartao().processar(total)
+            numero = input("Número do cartão: ").strip()
+            titular = input("Titular do cartão: ").strip()
+            cvv = input("CVV: ").strip()
+            PagamentoCartao(numero, titular, cvv).processar(total)
         else:
             print("Método inválido, pedido cancelado.\n")
             return
+            
         self.simular_entrega(restaurante)
 
-
-# Execução
 def menu():
     sistema = SistemaDelivery()
     while True:
@@ -286,7 +316,6 @@ def menu():
             break
         else:
             print("Opção inválida.\n")
-
 
 if __name__ == "__main__":
     menu()
